@@ -1,9 +1,7 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import Navbar from "@/components/navbar";
-import ContactSection from "@/components/contact-section";
-import GalleryStrip from "@/components/gallery-strip";
-import Footer from "@/components/footer";
+
 import ContactForm from "@/components/contact-form";
 import HeroSection from "@/components/hero-contact";
 
@@ -51,7 +49,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10">
           <ContactForm />
-          <ContactSection />
+        
         </div>
       </div>
 
@@ -70,11 +68,7 @@ export default function ContactPage() {
         />
       </section>
 
-      {/* Gallery Strip */}
-      <GalleryStrip />
-
-      {/* Footer */}
-      <Footer />
+  
     </main>
   );
 }

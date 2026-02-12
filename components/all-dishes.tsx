@@ -78,14 +78,12 @@ function DishCard({
   imagePosition: "left" | "right";
 }) {
   const imageEl = (
-    <div className="bg-[#383838] relative w-full aspect-square overflow-hidden flex justify-center items-center">
+    <div className="bg-[#383838] relative w-full h-full overflow-hidden flex justify-center items-center">
       <Image
         src={dish.image || "/placeholder.svg"}
         alt={dish.name}
-        style={{ width: "100%", height: "auto" }}
-        className="object-cover"
-        width={100}
-        height={100}
+        fill
+        className="object-contain"
       />
     </div>
   );
@@ -105,7 +103,7 @@ function DishCard({
   );
 
   return (
-    <div className="grid grid-cols-2 gap-0">
+    <div className="grid grid-cols-2 gap-0 min-h-[200px] md:min-h-[240px]">
       {imagePosition === "left" ? (
         <>
           {imageEl}

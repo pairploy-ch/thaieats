@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Navbar from "@/components/navbar";
-import ContactSection from "@/components/contact-section";
+
 import AllDishes from "@/components/all-dishes";
-import GalleryStrip from "@/components/gallery-strip";
-import Footer from "@/components/footer";
+
 
 
 
@@ -31,14 +30,6 @@ export default function MenuPage() {
 
       </div>
 
-      {/* Contact Section */}
-      <ContactSection />
-
-      {/* Gallery Strip */}
-      <GalleryStrip />
-
-      {/* Footer */}
-      <Footer />
     </main>
   );
 }

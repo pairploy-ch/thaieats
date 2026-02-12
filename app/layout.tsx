@@ -1,6 +1,10 @@
 import React from "react"
 import type { Metadata, Viewport } from "next";
 import { Inter, Caveat_Brush } from "next/font/google";
+import Footer from "@/components/footer";
+import ContactSection from "@/components/contact-section";
+import GalleryStrip from "@/components/gallery-strip";
+
 
 import "./globals.css";
 
@@ -36,7 +40,17 @@ export default function RootLayout({
         className={`${_inter.variable} ${_handwritten.variable} font-sans antialiased`}
       >
         {children}
+
+      {/* Contact Section */}
+      <ContactSection />
+
+      {/* Gallery Strip */}
+      <GalleryStrip />
+
+    <Footer />
       </body>
+   
     </html>
+    
   );
 }

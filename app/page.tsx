@@ -3,9 +3,8 @@ import HeroSection from "@/components/hero-section";
 import AboutSection from "@/components/about-section";
 import PopularDishes from "@/components/popular-dishes";
 import ReviewSection from "@/components/review-section";
-import ContactSection from "@/components/contact-section";
-import GalleryStrip from "@/components/gallery-strip";
-import Footer from "@/components/footer";
+
+// import Footer from "@/components/footer";
 
 export default function Page() {
   return (
@@ -37,14 +36,8 @@ export default function Page() {
       {/* Review Section - full-bleed background image */}
       <ReviewSection />
 
-      {/* Contact Section */}
-      <ContactSection />
-
-      {/* Gallery Strip */}
-      <GalleryStrip />
-
       {/* Footer */}
-      <Footer />
+      {/* <Footer /> */}
     </main>
   );
 }
