@@ -93,21 +93,21 @@ function DishCard({
   );
 
   const textEl = (
-    <div className="flex flex-col items-center justify-center bg-[#292929] p-4 md:p-6 text-center h-full">
-      <h3 className="font-handwritten text-base sm:text-lg md:text-2xl text-foreground mb-1">
+    <div className="flex flex-col items-center justify-center bg-[#292929] p-2 min-[300px]:p-4 md:p-6 text-center h-full">
+      <h3 className="font-handwritten text-sm min-[300px]:text-base sm:text-lg md:text-2xl text-foreground mb-1">
         {dish.name}
       </h3>
-      <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-3">
+      <p className="text-muted-foreground text-[10px] min-[300px]:text-xs md:text-sm leading-relaxed mb-2 min-[300px]:mb-3 line-clamp-3">
         {dish.description}
       </p>
-      <p className="font-handwritten text-lg sm:text-xl md:text-2xl text-[#D4A84B]">
+      <p className="font-handwritten text-base min-[300px]:text-lg sm:text-xl md:text-2xl text-[#D4A84B]">
         {dish.price}
       </p>
     </div>
   );
 
   return (
-    <div className="grid grid-cols-2 gap-0 h-56 sm:h-64 md:h-auto">
+    <div className="grid grid-cols-2 gap-0 h-48 min-[300px]:h-56 sm:h-64 md:h-auto">
       {imagePosition === "left" ? (
         <>
           {imageEl}
@@ -155,22 +155,22 @@ export default function PopularDishes() {
 
   return (
     <section id="popular-dishes">
-      <div className="relative pt-12 sm:pt-16 px-4 sm:px-6 md:px-16 lg:px-24">
+      <div className="relative pt-8 min-[300px]:pt-12 sm:pt-16 px-2 min-[300px]:px-4 sm:px-6 md:px-16 lg:px-24">
         <div className="max-w-7xl mx-auto">
           {/* Title */}
-          <div className="text-center mb-8 sm:mb-12">
+          <div className="text-center mb-6 min-[300px]:mb-8 sm:mb-12">
             <div className="inline-block">
-              <h2 className="font-handwritten text-3xl sm:text-4xl md:text-5xl text-foreground mb-2">
+              <h2 className="font-handwritten text-2xl min-[300px]:text-3xl sm:text-4xl md:text-5xl text-foreground mb-2">
                 Popular Dishes
               </h2>
               {/* White brush underline */}
-              <div className="mb-6 sm:mb-8 flex justify-end">
+              <div className="mb-4 min-[300px]:mb-6 sm:mb-8 flex justify-end">
                 <Image
                   src="/images/underline.png"
                   alt="underline"
                   width={200}
                   height={20}
-                  className="w-32 sm:w-40 md:w-48 h-auto"
+                  className="w-24 min-[300px]:w-32 sm:w-40 md:w-48 h-auto"
                 />
               </div>
             </div>
@@ -191,14 +191,14 @@ export default function PopularDishes() {
           </div>
 
           {/* Pagination Dots */}
-          <div className="flex justify-center gap-3 mt-8 sm:mt-10">
+          <div className="flex justify-center gap-2 min-[300px]:gap-3 mt-6 min-[300px]:mt-8 sm:mt-10">
             {pages.map((_, index) => (
               <button
                 key={index}
                 type="button"
                 onClick={() => setCurrentPage(index)}
                 className={cn(
-                  "w-3 h-3 rounded-full transition-colors duration-300",
+                  "w-2.5 h-2.5 min-[300px]:w-3 min-[300px]:h-3 rounded-full transition-colors duration-300",
                   currentPage === index
                     ? "bg-foreground"
                     : "bg-muted-foreground/40 hover:bg-muted-foreground/60",
@@ -210,7 +210,7 @@ export default function PopularDishes() {
         </div>
       </div>
       
-      <div className="mt-8 sm:mt-12">
+      <div className="mt-6 min-[300px]:mt-8 sm:mt-12">
         <Image
           src="/images/bg-line.png"
           alt="Thai street food"
