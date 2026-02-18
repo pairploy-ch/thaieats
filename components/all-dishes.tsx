@@ -2,73 +2,16 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
 
 interface Dish {
+  id: string;
   name: string;
   description: string;
-  price: string;
+  price: number;
+  currency: string;
   image: string;
 }
-
-const dishesPage1: Dish[] = [
-  {
-    name: "Street Crispy Chicken with Sticky Rice",
-    description:
-      "Sprad thailandsk street chicken, saftig indeni og perfekt sammen med blod klisterris.",
-    price: "65 kr.",
-    image: "/images/dish-crispy-chicken.png",
-  },
-  {
-    name: "So Street Chicken Noodle Soup",
-    description:
-      "Fyldig og aromatisk kyllingenudelsuppe med kyllingekodboller, grontsager og nudler.",
-    price: "95 kr.",
-    image: "/images/dish-noodle-soup.png",
-  },
-  {
-    name: "Bangkok Bold Basil",
-    description:
-      "Krydret kylling stegt i wok med hellig basilikum - aegte thailandsk street food, proteinrig.",
-    price: "95 kr.",
-    image: "/images/dish-basil.png",
-  },
-  {
-    name: "Power Greens Wok",
-    description:
-      "Wokstegte grontsager i thailandsk stil, let aromatiske, sprode og fulde af naering.",
-    price: "95 kr.",
-    image: "/images/dish-greens-wok.png",
-  },
-  {
-    name: "Royal Green Curry Chicken",
-    description:
-      "Sprød thailandsk street chicken, saftig indeni og perfekt sammen med blød klisterris.",
-    price: "65 kr.",
-    image: "/images/dish-green-curry.png",
-  },
-  {
-    name: "Classic Red Curry Chicken",
-    description:
-      "Fyldig og aromatisk kyllingenudelsuppe med kyllingekødboller, grøntsager og nudler.",
-    price: "65 kr.",
-    image: "/images/dish-spring-rolls.png",
-  },
-  {
-    name: "Street Yellow Noodles Wok",
-    description:
-      "Krydret kylling stegt i wok med hellig basilikum – ægte thailandsk street food, proteinrig.",
-    price: "65 kr.",
-    image: "/images/dish-mango-rice.png",
-  },
-  {
-    name: "Zesty Chicken Rice Bowl",
-    description:
-      "Wokstegte grøntsager i thailandsk stil, let aromatiske, sprøde og fulde af næring.",
-    price: "65 kr.",
-    image: "/images/dish-tom-kha.png",
-  },
-];
 
 function DishCard({
   dish,
@@ -77,6 +20,8 @@ function DishCard({
   dish: Dish;
   imagePosition: "left" | "right";
 }) {
+  const formattedPrice = `${dish.price} ${dish.currency ?? "kr."}`;
+
   const imageEl = (
     <div className="bg-[#383838] relative w-full h-full overflow-hidden flex justify-center items-center">
       <Image
@@ -97,7 +42,7 @@ function DishCard({
         {dish.description}
       </p>
       <p className="font-handwritten text-xl md:text-2xl text-[#D4A84B]">
-        {dish.price}
+        {formattedPrice}
       </p>
     </div>
   );
@@ -128,7 +73,7 @@ function DishesGrid({ dishes }: { dishes: Dish[] }) {
 
         return (
           <DishCard
-            key={index}
+            key={dish.id}
             dish={dish}
             imagePosition={imagePosition}
           />
@@ -138,13 +83,36 @@ function DishesGrid({ dishes }: { dishes: Dish[] }) {
   );
 }
 
-
 export default function PopularDishes() {
+  const [dishes, setDishes] = React.useState<Dish[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchDishes = async () => {
+      const { data, error } = await supabase
+        .from("menu")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error(error);
+      } else {
+        setDishes(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchDishes();
+  }, []);
+
+  if (loading) return null;
+  if (!dishes.length) return null;
+
   return (
     <section id="popular-dishes">
       <div className="relative pt-16 px-6 md:px-16 lg:px-24">
         <div className="max-w-7xl mx-auto">
-          {/* Title */}
           <div
             className="text-center mb-12"
             style={{ display: "flex", justifyContent: "center" }}
@@ -168,8 +136,7 @@ export default function PopularDishes() {
             </div>
           </div>
 
-          {/* Single page dishes */}
-          <DishesGrid dishes={dishesPage1} />
+          <DishesGrid dishes={dishes} />
         </div>
       </div>
 
