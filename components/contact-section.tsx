@@ -10,6 +10,8 @@ const iconMap = {
   FileText,
 } as const;
 
+export const dynamic = "force-dynamic";
+
 export default async function ContactSection() {
   const { data, error } = await supabase
     .from("contact")
