@@ -87,7 +87,7 @@ function DishCard({
         src={dish.image || "/placeholder.svg"}
         alt={dish.name}
         fill
-        className="object-contain"
+        className="object-cover"
         sizes="(max-width: 768px) 50vw, 25vw"
       />
     </div>
