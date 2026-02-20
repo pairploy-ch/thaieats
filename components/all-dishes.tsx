@@ -28,7 +28,7 @@ function DishCard({
         src={dish.image || "/placeholder.svg"}
         alt={dish.name}
         fill
-        className="object-contain"
+        className="object-cover"
       />
     </div>
   );
