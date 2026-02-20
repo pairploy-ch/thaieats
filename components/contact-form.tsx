@@ -16,11 +16,28 @@ export default function ContactForm() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    // Form submission logic would go here
-    setFormData({ name: "", email: "", phone: "", message: "" });
+async function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
+
+  try {
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (res.ok) {
+      alert("Message sent successfully!");
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } else {
+      alert("Something went wrong.");
+    }
+  } catch (error) {
+    alert("Server error.");
   }
+}
 
   return (
     <section className="py-16 md:py-20 px-6 md:px-16 lg:px-24">
