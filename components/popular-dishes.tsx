@@ -12,114 +12,55 @@ interface Dish {
   image: string;
 }
 
-const dishesPage1: Dish[] = [
-  {
-    name: "Street Crispy Chicken with Sticky Rice",
-    description:
-      "Sprad thailandsk street chicken, saftig indeni og perfekt sammen med blod klisterris.",
-    price: "65 kr.",
-    image: "/images/dish-crispy-chicken.png",
-  },
-  {
-    name: "So Street Chicken Noodle Soup",
-    description:
-      "Fyldig og aromatisk kyllingenudelsuppe med kyllingekodboller, grontsager og nudler.",
-    price: "95 kr.",
-    image: "/images/dish-noodle-soup.png",
-  },
-  {
-    name: "Bangkok Bold Basil",
-    description:
-      "Krydret kylling stegt i wok med hellig basilikum - aegte thailandsk street food, proteinrig.",
-    price: "95 kr.",
-    image: "/images/dish-basil.png",
-  },
-  {
-    name: "Power Greens Wok",
-    description:
-      "Wokstegte grontsager i thailandsk stil, let aromatiske, sprode og fulde af naering.",
-    price: "95 kr.",
-    image: "/images/dish-greens-wok.png",
-  },
-];
-
-const dishesPage2: Dish[] = [
-  {
-    name: "Royal Green Curry Chicken",
-    description:
-      "Sprød thailandsk street chicken, saftig indeni og perfekt sammen med blød klisterris.",
-    price: "65 kr.",
-    image: "/images/dish-green-curry.png",
-  },
-  {
-    name: "Classic Red Curry Chicken",
-    description:
-      "Fyldig og aromatisk kyllingenudelsuppe med kyllingekødboller, grøntsager og nudler.",
-    price: "65 kr.",
-    image: "/images/dish-spring-rolls.png",
-  },
-  {
-    name: "Street Yellow Noodles Wok",
-    description:
-      "Krydret kylling stegt i wok med hellig basilikum – ægte thailandsk street food, proteinrig.",
-    price: "65 kr.",
-    image: "/images/dish-mango-rice.png",
-  },
-  {
-    name: "Zesty Chicken Rice Bowl",
-    description:
-      "Wokstegte grøntsager i thailandsk stil, let aromatiske, sprøde og fulde af næring.",
-    price: "65 kr.",
-    image: "/images/dish-tom-kha.png",
-  },
-];
-
 function DishCard({
   dish,
   imagePosition,
+  mobileImagePosition,
 }: {
   dish: Dish;
   imagePosition: "left" | "right";
+  mobileImagePosition: "left" | "right";
 }) {
-  const imageEl = (
-    <div className="bg-[#383838] relative w-full h-full overflow-hidden flex items-center justify-center">
-      <Image
-        src={dish.image || "/placeholder.svg"}
-        alt={dish.name}
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 50vw, 25vw"
-      />
-    </div>
-  );
-
-  const textEl = (
-    <div className="flex flex-col items-center justify-center bg-[#292929] p-2 min-[300px]:p-4 md:p-6 text-center h-full">
-      <h3 className="font-handwritten text-sm min-[300px]:text-base sm:text-lg md:text-2xl text-foreground mb-1">
-        {dish.name}
-      </h3>
-      <p className="text-muted-foreground text-[10px] min-[300px]:text-xs md:text-sm leading-relaxed mb-2 min-[300px]:mb-3 line-clamp-3">
-        {dish.description}
-      </p>
-      <p className="font-handwritten text-base min-[300px]:text-lg sm:text-xl md:text-2xl text-[#D4A84B]">
-        {dish.price}
-      </p>
-    </div>
-  );
+  const mobileLeft = mobileImagePosition === "left";
+  const desktopLeft = imagePosition === "left";
 
   return (
     <div className="grid grid-cols-2 gap-0 h-48 min-[300px]:h-56 sm:h-64 md:h-auto">
-      {imagePosition === "left" ? (
-        <>
-          {imageEl}
-          {textEl}
-        </>
-      ) : (
-        <>
-          {textEl}
-          {imageEl}
-        </>
-      )}
+      {/* Image */}
+      <div
+        className={`
+          bg-[#383838] relative w-full h-full overflow-hidden flex items-center justify-center
+          ${mobileLeft ? "order-first" : "order-last"}
+          ${desktopLeft ? "md:order-first" : "md:order-last"}
+        `}
+      >
+        <Image
+          src={dish.image || "/placeholder.svg"}
+          alt={dish.name}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 50vw, 25vw"
+        />
+      </div>
+
+      {/* Text */}
+      <div
+        className={`
+          flex flex-col items-center justify-center bg-[#292929] p-2 min-[300px]:p-4 md:p-6 text-center h-full
+          ${mobileLeft ? "order-last" : "order-first"}
+          ${desktopLeft ? "md:order-last" : "md:order-first"}
+        `}
+      >
+        <h3 className="font-handwritten text-sm min-[300px]:text-base sm:text-lg md:text-2xl text-foreground mb-1">
+          {dish.name}
+        </h3>
+        <p className="text-muted-foreground text-[10px] min-[300px]:text-xs md:text-sm leading-relaxed mb-2 min-[300px]:mb-3 line-clamp-3">
+          {dish.description}
+        </p>
+        <p className="font-handwritten text-base min-[300px]:text-lg sm:text-xl md:text-2xl text-[#D4A84B]">
+          {dish.price}
+        </p>
+      </div>
     </div>
   );
 }
@@ -128,16 +69,16 @@ function DishesGrid({ dishes }: { dishes: Dish[] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto">
       {dishes.map((dish, index) => {
-        // Desktop: สลับตาม row (ทุก 2 cards = 1 row)
-        // Mobile: สลับตาม index
         const row = Math.floor(index / 2);
-        const imagePosition = row % 2 === 0 ? "left" : "right";
-        
+        const desktopPosition = row % 2 === 0 ? "left" : "right";
+        const mobilePosition = index % 2 === 0 ? "left" : "right";
+
         return (
           <DishCard
             key={index}
             dish={dish}
-            imagePosition={imagePosition}
+            imagePosition={desktopPosition}
+            mobileImagePosition={mobilePosition}
           />
         );
       })}
@@ -171,7 +112,6 @@ export default function PopularDishes() {
 
   if (loading || !dishes.length) return null;
 
-  // 🔹 แบ่งหน้าละ 4 เมนู
   const itemsPerPage = 4;
   const pages = [];
 

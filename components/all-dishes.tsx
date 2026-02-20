@@ -16,50 +16,50 @@ interface Dish {
 function DishCard({
   dish,
   imagePosition,
+  mobileImagePosition,
 }: {
   dish: Dish;
   imagePosition: "left" | "right";
+  mobileImagePosition: "left" | "right";
 }) {
   const formattedPrice = `${dish.price} ${dish.currency ?? "kr."}`;
-
-  const imageEl = (
-    <div className="bg-[#383838] relative w-full h-full overflow-hidden flex justify-center items-center">
-      <Image
-        src={dish.image || "/placeholder.svg"}
-        alt={dish.name}
-        fill
-        className="object-cover"
-      />
-    </div>
-  );
-
-  const textEl = (
-    <div className="flex flex-col items-center justify-center bg-[#292929] p-4 md:p-6 text-center h-full">
-      <h3 className="font-handwritten text-xl md:text-2xl text-foreground mb-1">
-        {dish.name}
-      </h3>
-      <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-3">
-        {dish.description}
-      </p>
-      <p className="font-handwritten text-xl md:text-2xl text-[#D4A84B]">
-        {formattedPrice}
-      </p>
-    </div>
-  );
+  const mobileLeft = mobileImagePosition === "left";
+  const desktopLeft = imagePosition === "left";
 
   return (
     <div className="grid grid-cols-2 gap-0 min-h-[200px] md:min-h-[240px]">
-      {imagePosition === "left" ? (
-        <>
-          {imageEl}
-          {textEl}
-        </>
-      ) : (
-        <>
-          {textEl}
-          {imageEl}
-        </>
-      )}
+      <div
+        className={`
+          bg-[#383838] relative w-full h-full overflow-hidden flex justify-center items-center
+          ${mobileLeft ? "order-first" : "order-last"}
+          ${desktopLeft ? "md:order-first" : "md:order-last"}
+        `}
+      >
+        <Image
+          src={dish.image || "/placeholder.svg"}
+          alt={dish.name}
+          fill
+          className="object-cover"
+        />
+      </div>
+
+      <div
+        className={`
+          flex flex-col items-center justify-center bg-[#292929] p-4 md:p-6 text-center h-full
+          ${mobileLeft ? "order-last" : "order-first"}
+          ${desktopLeft ? "md:order-last" : "md:order-first"}
+        `}
+      >
+        <h3 className="font-handwritten text-xl md:text-2xl text-foreground mb-1">
+          {dish.name}
+        </h3>
+        <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-3">
+          {dish.description}
+        </p>
+        <p className="font-handwritten text-xl md:text-2xl text-[#D4A84B]">
+          {formattedPrice}
+        </p>
+      </div>
     </div>
   );
 }
@@ -69,13 +69,15 @@ function DishesGrid({ dishes }: { dishes: Dish[] }) {
     <div className="grid grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto">
       {dishes.map((dish, index) => {
         const group = Math.floor(index / 2);
-        const imagePosition = group % 2 === 0 ? "left" : "right";
+        const desktopPosition = group % 2 === 0 ? "left" : "right";
+        const mobilePosition = index % 2 === 0 ? "left" : "right";
 
         return (
           <DishCard
             key={dish.id}
             dish={dish}
-            imagePosition={imagePosition}
+            imagePosition={desktopPosition}
+            mobileImagePosition={mobilePosition}
           />
         );
       })}
@@ -121,7 +123,6 @@ export default function PopularDishes() {
               <h2 className="font-handwritten text-4xl md:text-5xl text-foreground mb-2">
                 All Dishes
               </h2>
-
               <div
                 className="mb-8"
                 style={{ display: "flex", justifyContent: "end" }}
