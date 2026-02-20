@@ -24,13 +24,14 @@ export default function AboutSection() {
 </div>
 
           <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
-         Thai Street Eats brings the bold spirit of Thailand’s street food culture to the heart of Copenhagen. Inspired by late-night markets, sizzling woks, and recipes passed down through generations, we serve authentic Thai flavors with confidence and character.
-From comforting Thai chicken noodle bowls to aromatic green curry, fiery basil stir-fry, and vibrant tom yum, every dish is crafted to deliver the perfect harmony of sweet, sour, salty, and spice — the signature balance that defines true Thai cuisine.
-Fast. Fresh. Fearlessly flavorful.
+         At Thai Street Eats, we bring the bold, vibrant taste of Thailand to Copenhagen — crafted for modern living. Our dishes are naturally high in protein and rich in fiber, designed to support an active, balanced lifestyle without sacrificing flavor.
 
-Whether you're stopping by for a quick lunch or gathering with friends for dinner, we bring Thailand to your table — real ingredients, real heat, real heart.
-Taste the streets of Thailand — right here in Copenhagen.
-          </p>
+
+          </p> 
+           <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
+Eat well. Live well. <br></br>
+Thailand, served fresh in Copenhagen.
+                </p> 
         </div>
 
         {/* Right: Image Grid */}
