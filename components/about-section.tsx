@@ -24,13 +24,17 @@ export default function AboutSection() {
 </div>
 
           <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
-         At Thai Street Eats, we bring the bold, vibrant taste of Thailand to Copenhagen — crafted for modern living. Our dishes are naturally high in protein and rich in fiber, designed to support an active, balanced lifestyle without sacrificing flavor.
+     Authentic Thai flavor. Smart, everyday choice.
 
 
           </p> <br></br><br></br>
            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
-Eat well. Live well. <br></br>
-Thailand, served fresh in Copenhagen.
+At Thai Street Eats, we believe healthy, flavorful food should be accessible to everyone. That’s why we serve authentic Thai dishes that are rich in protein, high in fiber, and full of bold, vibrant taste — all at a price that makes sense for everyday life.
+                </p> <br></br><br></br>
+
+          <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
+Great taste. Real nutrition. Honest value. <br></br>
+Thai Street Eats — made simple, made satisfying, made for you.
                 </p> 
         </div>
 
