@@ -70,7 +70,7 @@ export default function Navbar({ activePage = "home", variant = "overlay" }: Nav
         {/* Desktop Phone Number */}
         <div className="hidden lg:flex items-center gap-2 text-foreground">
           <Phone className="w-4 h-4" />
-          <span className="text-sm font-medium tracking-wide">Phone +45 55 24 23 01</span>
+          <span className="text-sm font-medium tracking-wide">Phone (+45) 55 24 23 01</span>
         </div>
 
         {/* Mobile Menu Button */}
