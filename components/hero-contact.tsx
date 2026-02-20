@@ -5,7 +5,7 @@ export default function HeroSection() {
     <section className="relative w-full h-screen min-h-[600px] max-h-[900px]">
       {/* Background Image */}
       <Image
-        src="/images/hero-bg.jpg"
+        src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/banner.png"
         alt="Thai street food spread"
         fill
         className="object-cover"

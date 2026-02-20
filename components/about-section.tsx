@@ -22,8 +22,8 @@ export default function AboutSection() {
     />
   </div>
 </div>
-
-          <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
+<div className="mt-14">
+ <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
      Authentic Thai flavor. Smart, everyday choice.
 
 
@@ -36,54 +36,67 @@ At Thai Street Eats, we believe healthy, flavorful food should be accessible to 
 Great taste. Real nutrition. Honest value. <br></br>
 Thai Street Eats — made simple, made satisfying, made for you.
                 </p> 
+</div>
+
+         
         </div>
 
         {/* Right: Image Grid */}
-        <div className="w-full lg:w-1/2">
-          {/* Top row - 2 images */}
-          <div className="flex gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4 justify-center lg:justify-end">
-            <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 h-28 sm:h-32 md:h-36 lg:h-32 xl:h-36 overflow-hidden rounded-sm">
-              <Image
-                src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/PadKrapao.png"
-                alt="Thai massaman curry"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
-              />
-            </div>
-            <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 h-28 sm:h-32 md:h-36 lg:h-32 xl:h-36 overflow-hidden rounded-sm">
-              <Image
-                src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/MassamanThai.png"
-                alt="Pad krapao with fried egg"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
-              />
-            </div>
-          </div>
-          
-          {/* Bottom row - 2 images, slightly offset */}
-          <div className="flex gap-2 sm:gap-3 md:gap-4 justify-center lg:justify-end pr-0 sm:pr-4 md:pr-6 lg:pr-4 xl:pr-8">
-            <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 h-28 sm:h-32 md:h-36 lg:h-32 xl:h-36 overflow-hidden rounded-sm">
-              <Image
-                src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/RedCurry.png"
-                alt="Tom yum soup"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
-              />
-            </div>
-            <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 h-28 sm:h-32 md:h-36 lg:h-32 xl:h-36 overflow-hidden rounded-sm">
-              <Image
-                src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/KaiTodKa.png"
-                alt="Pad thai noodles"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
-              />
-            </div>
-          </div>
-        </div>
+     <div className="w-full lg:w-1/2">
+  {/* Top row - 2 images */}
+  <div className="flex gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4 justify-center lg:justify-end">
+    
+    <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 
+                    aspect-[3/4] overflow-hidden rounded-sm">
+      <Image
+        src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/PadKrapao.png"
+        alt="Thai massaman curry"
+        fill
+        className="object-cover"
+        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
+      />
+    </div>
+
+    <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 
+                    aspect-[3/4] overflow-hidden rounded-sm">
+      <Image
+        src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/MassamanThai.png"
+        alt="Pad krapao with fried egg"
+        fill
+        className="object-cover"
+        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
+      />
+    </div>
+
+  </div>
+  
+  {/* Bottom row - 2 images */}
+  <div className="flex gap-2 sm:gap-3 md:gap-4 justify-center lg:justify-end pr-0 sm:pr-4 md:pr-6 lg:pr-4 xl:pr-8">
+    
+    <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 
+                    aspect-[3/4] overflow-hidden rounded-sm">
+      <Image
+        src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/RedCurry.png"
+        alt="Tom yum soup"
+        fill
+        className="object-cover"
+        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
+      />
+    </div>
+
+    <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 
+                    aspect-[3/4] overflow-hidden rounded-sm">
+      <Image
+        src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/KaiTodKa.png"
+        alt="Pad thai noodles"
+        fill
+        className="object-cover"
+        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 20vw"
+      />
+    </div>
+
+  </div>
+</div>
       </div>
     </section>
   );
