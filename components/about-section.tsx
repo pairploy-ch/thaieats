@@ -39,7 +39,7 @@ Taste the streets of Thailand — right here in Copenhagen.
           <div className="flex gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4 justify-center lg:justify-end">
             <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 h-28 sm:h-32 md:h-36 lg:h-32 xl:h-36 overflow-hidden rounded-sm">
               <Image
-                src="/images/about-1.png"
+                src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/PadKrapao.png"
                 alt="Thai massaman curry"
                 fill
                 className="object-cover"
@@ -48,7 +48,7 @@ Taste the streets of Thailand — right here in Copenhagen.
             </div>
             <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 h-28 sm:h-32 md:h-36 lg:h-32 xl:h-36 overflow-hidden rounded-sm">
               <Image
-                src="/images/about-2.png"
+                src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/MassamanThai.png"
                 alt="Pad krapao with fried egg"
                 fill
                 className="object-cover"
@@ -61,7 +61,7 @@ Taste the streets of Thailand — right here in Copenhagen.
           <div className="flex gap-2 sm:gap-3 md:gap-4 justify-center lg:justify-end pr-0 sm:pr-4 md:pr-6 lg:pr-4 xl:pr-8">
             <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 h-28 sm:h-32 md:h-36 lg:h-32 xl:h-36 overflow-hidden rounded-sm">
               <Image
-                src="/images/about-3.png"
+                src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/RedCurry.png"
                 alt="Tom yum soup"
                 fill
                 className="object-cover"
@@ -70,7 +70,7 @@ Taste the streets of Thailand — right here in Copenhagen.
             </div>
             <div className="relative w-[45%] sm:w-44 md:w-52 lg:w-44 xl:w-52 h-28 sm:h-32 md:h-36 lg:h-32 xl:h-36 overflow-hidden rounded-sm">
               <Image
-                src="/images/about-4.png"
+                src="https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/KaiTodKa.png"
                 alt="Pad thai noodles"
                 fill
                 className="object-cover"
