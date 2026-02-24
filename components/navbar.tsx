@@ -11,7 +11,17 @@ interface NavbarProps {
   variant?: "overlay" | "solid";
 }
 
-export default function Navbar({ activePage = "home", variant = "overlay" }: NavbarProps) {
+interface NavbarProps {
+  activePage?: "home" | "menu" | "contact";
+  variant?: "overlay" | "solid";
+  phone?: string | null;
+}
+
+export default function Navbar({
+  activePage = "home",
+  variant = "overlay",
+  phone,
+}: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -32,7 +42,9 @@ export default function Navbar({ activePage = "home", variant = "overlay" }: Nav
     <nav
       className={cn(
         "z-50",
-        variant === "overlay" ? "absolute top-0 left-0 right-0" : "relative bg-[#1a1a1a]"
+        variant === "overlay"
+          ? "absolute top-0 left-0 right-0"
+          : "relative bg-[#1a1a1a]",
       )}
     >
       {/* Top bar with navigation */}
@@ -59,7 +71,7 @@ export default function Navbar({ activePage = "home", variant = "overlay" }: Nav
                 "text-foreground font-medium text-sm tracking-wide hover:opacity-80 transition-opacity",
                 activePage === link.id
                   ? "underline underline-offset-4 decoration-foreground"
-                  : "hover:underline underline-offset-4"
+                  : "hover:underline underline-offset-4",
               )}
             >
               {link.label}
@@ -70,7 +82,9 @@ export default function Navbar({ activePage = "home", variant = "overlay" }: Nav
         {/* Desktop Phone Number */}
         <div className="hidden lg:flex items-center gap-2 text-foreground">
           <Phone className="w-4 h-4" />
-          <span className="text-sm font-medium tracking-wide">Phone (+45) 55 24 23 01</span>
+          <span className="text-sm font-medium tracking-wide">
+            {phone ? `Phone ${phone}` : ""}
+          </span>
         </div>
 
         {/* Mobile Menu Button */}
@@ -94,7 +108,7 @@ export default function Navbar({ activePage = "home", variant = "overlay" }: Nav
       <div
         className={cn(
           "md:hidden fixed inset-0 bg-[#1a1a1a] z-40 transition-transform duration-300 ease-in-out",
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full",
         )}
         style={{ top: "80px" }} // Adjust based on navbar height
       >
@@ -109,7 +123,7 @@ export default function Navbar({ activePage = "home", variant = "overlay" }: Nav
                 "text-foreground font-medium text-2xl tracking-wide hover:opacity-80 transition-opacity",
                 activePage === link.id
                   ? "underline underline-offset-8 decoration-2"
-                  : "hover:underline underline-offset-8 decoration-2"
+                  : "hover:underline underline-offset-8 decoration-2",
               )}
             >
               {link.label}
@@ -119,7 +133,9 @@ export default function Navbar({ activePage = "home", variant = "overlay" }: Nav
           {/* Mobile Phone Number */}
           <div className="flex flex-col items-center gap-3 text-foreground mt-8">
             <Phone className="w-6 h-6" />
-            <span className="text-lg font-medium tracking-wide">Phone (+45) 55 24 23 01</span>
+            <span className="text-sm font-medium tracking-wide">
+              {phone ? `Phone ${phone}` : ""}
+            </span>
           </div>
         </div>
       </div>

@@ -4,8 +4,8 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    domains: ["zgrpbmhpbmmpcpxdbhoy.supabase.co"],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

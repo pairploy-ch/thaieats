@@ -1,25 +1,44 @@
 import Image from "next/image";
+import { createClient } from "@supabase/supabase-js";
 
-const galleryImages = [
-  { src: "https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/KaiTodKa.png", alt: "Tom yum goong" },
-  { src: "https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/KeanWanKai.png", alt: "Pad thai" },
-  { src: "https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/MassamanThai.png", alt: "Green curry" },
-  { src: "https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/PadMee.png", alt: "Stir fried pork" },
-  { src: "https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/PadPak.png", alt: "Red curry duck" },
-  { src: "https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/RedCurry.png", alt: "Larb gai" },
-  { src: "https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/ZapKai.png", alt: "Pad krapao" },
-  { src: "https://zgrpbmhpbmmpcpxdbhoy.supabase.co/storage/v1/object/public/menu/PadKrapao.png", alt: "Massaman curry" },
-];
+interface Dish {
+  name: string;
+  image: string;
+}
 
-export default function GalleryStrip() {
+// ✅ สร้าง supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+// ✅ shuffle function
+function shuffleArray<T>(array: T[]): T[] {
+  return [...array].sort(() => Math.random() - 0.5);
+}
+
+export default async function GalleryStrip() {
+  // ✅ ดึงข้อมูลจาก table menu
+  const { data, error } = await supabase
+    .from("menu")
+    .select("name, image");
+
+  if (error || !data) {
+    console.error(error);
+    return null;
+  }
+
+  // ✅ สุ่ม 8 รูป
+  const randomImages = shuffleArray(data as Dish[]).slice(0, 8);
+
   return (
     <section className="w-full overflow-hidden">
       <div className="grid grid-cols-4 md:grid-cols-8">
-        {galleryImages.map((img) => (
-          <div key={img.src} className="relative aspect-square overflow-hidden">
+        {randomImages.map((dish) => (
+          <div key={dish.image} className="relative aspect-square overflow-hidden">
             <Image
-              src={img.src || "/placeholder.svg"}
-              alt={img.alt}
+              src={dish.image}
+              alt={dish.name}
               fill
               className="object-cover hover:scale-110 transition-transform duration-300"
             />
