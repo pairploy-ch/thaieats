@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend('JucqCMTA_P57TPMbACAGZcMpECbPfzD8E');
+const resend = new Resend('re_41t34f8w_BxyRTFT5dL3ihzN8RZw1GDwT');
 
 export async function POST(req: Request) {
   try {
     const { name, email, phone, message } = await req.json();
 
     await resend.emails.send({
-      from: "Contact Form <onboarding@resend.dev>", 
+      from: "Thai Eats <noreply@thaieats.dk>", 
       to: "thaieats111@gmail.com", // 
       subject: `New Contact from ${name}`,
       html: `
