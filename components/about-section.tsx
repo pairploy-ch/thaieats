@@ -30,6 +30,17 @@ export default async function AboutSection() {
     return null;
   }
 
+  // ✅ ดึงข้อความจาก table about (column ชื่อ text)
+  const { data: aboutData, error: aboutError } = await supabase
+    .from("about")
+    .select("text")
+    .limit(1)
+    .single();
+
+  if (aboutError) {
+    console.error(aboutError);
+  }
+
   // ✅ สุ่ม 4 รูป
   const randomDishes = shuffleArray(data as Dish[]).slice(0, 4);
 
@@ -37,7 +48,7 @@ export default async function AboutSection() {
     <section id="about" className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 md:gap-12 lg:gap-16 items-start pt-6 md:pt-10">
 
-        {/* Left: Text Content (เหมือนเดิมทั้งหมด) */}
+        {/* Left: Text Content */}
         <div className="w-full lg:w-1/2">
           <div className="w-fit mx-auto md:mx-0 text-center md:text-left">
             <h2 className="font-handwritten text-3xl sm:text-4xl md:text-5xl text-foreground mb-2">
@@ -56,26 +67,13 @@ export default async function AboutSection() {
           </div>
 
           <div className="mt-14">
-            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
-              Authentic Thai flavor. Smart, everyday choice.
-            </p>
-
-            <br /><br />
-
-            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
-              At Thai Street Eats, we believe healthy, flavorful food should be accessible to everyone. That’s why we serve authentic Thai dishes that are rich in protein, high in fiber, and full of bold, vibrant taste — all at a price that makes sense for everyday life.
-            </p>
-
-            <br /><br />
-
-            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg">
-              Great taste. Real nutrition. Honest value. <br />
-              Thai Street Eats — made simple, made satisfying, made for you.
+            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base md:text-lg whitespace-pre-line">
+              {aboutData?.text}
             </p>
           </div>
         </div>
 
-        {/* Right: Image Grid (Design เดิม 100%) */}
+        {/* Right: Image Grid (เหมือนเดิม 100%) */}
         <div className="w-full lg:w-1/2">
 
           {/* Top row */}
