@@ -2,50 +2,48 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-interface Review {
+interface Quote {
   id: string;
-  title: string;
-  text: string;
-  rating: number;
+  en_text: string;
+  dk_text: string;
 }
 
 export default function ReviewSection() {
-  const [reviews, setReviews] = React.useState<Review[]>([]);
+  const [quotes, setQuotes] = React.useState<Quote[]>([]);
   const [current, setCurrent] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
 
   const [touchStart, setTouchStart] = React.useState(0);
   const [touchEnd, setTouchEnd] = React.useState(0);
 
-  // 🔹 Fetch reviews
   React.useEffect(() => {
-    const fetchReviews = async () => {
+    const fetchQuotes = async () => {
       const { data, error } = await supabase
-        .from("review")
-        .select("*")
+        .from("quote")
+        .select("id, en_text, dk_text")
         .order("created_at", { ascending: true });
 
       if (error) {
         console.error(error);
       } else {
-        setReviews(data || []);
+        setQuotes(data || []);
       }
 
       setLoading(false);
     };
 
-    fetchReviews();
+    fetchQuotes();
   }, []);
 
   const prev = () => {
-    setCurrent((c) => (c === 0 ? reviews.length - 1 : c - 1));
+    setCurrent((c) => (c === 0 ? quotes.length - 1 : c - 1));
   };
 
   const next = () => {
-    setCurrent((c) => (c === reviews.length - 1 ? 0 : c + 1));
+    setCurrent((c) => (c === quotes.length - 1 ? 0 : c + 1));
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -62,9 +60,9 @@ export default function ReviewSection() {
   };
 
   if (loading) return null;
-  if (!reviews.length) return null;
+  if (!quotes.length) return null;
 
-  const review = reviews[current];
+  const quote = quotes[current];
 
   return (
     <section className="relative w-full h-[420px] md:h-[460px] overflow-hidden">
@@ -95,28 +93,18 @@ export default function ReviewSection() {
 
         {/* Card */}
         <div className="bg-[#3a3a3a]/80 border border-[#555] backdrop-blur-sm rounded-sm px-6 py-6 sm:px-8 sm:py-8 md:px-12 md:py-10 max-w-lg w-full mx-4 text-center">
-          <h3 className="text-foreground font-bold text-lg md:text-xl tracking-wider mb-3 md:mb-4">
-            {review.title}
-          </h3>
-
-          <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-4 md:mb-5">
-            {review.text}
+          <p className="text-muted-foreground text-sm md:text-lg leading-relaxed mb-2">
+            {quote.en_text}
           </p>
-
-          <div className="flex justify-center gap-1">
-            {Array.from({ length: review.rating }).map((_, i) => (
-              <Star
-                key={i}
-                className="w-5 h-5 fill-[#D4A84B] text-[#D4A84B]"
-              />
-            ))}
-          </div>
+          <p className="text-muted-foreground text-sm md:text-lg leading-relaxed mb-4 md:mb-5">
+            {quote.dk_text}
+          </p>
 
           {/* Dots */}
           <div className="flex justify-center gap-2 mt-5 md:hidden">
-            {reviews.map((_, i) => (
+            {quotes.map((_, i) => (
               <button
-                key={reviews[i].id}
+                key={quotes[i].id}
                 type="button"
                 onClick={() => setCurrent(i)}
                 className={`w-2 h-2 rounded-full transition-colors ${
