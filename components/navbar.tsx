@@ -3,7 +3,7 @@
 // import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Phone, Menu, X } from "lucide-react";
+import { Phone, Menu, X, CircleUser } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -11,12 +11,12 @@ import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
 interface NavbarProps {
-  activePage?: "home" | "menu" | "contact";
+  activePage?: "home" | "menu" | "contact" | "me";
   variant?: "overlay" | "solid";
 }
 
 interface NavbarProps {
-  activePage?: "home" | "menu" | "contact";
+  activePage?: "home" | "menu" | "contact" | "me";
   variant?: "overlay" | "solid";
   phone?: string | null;
 }
@@ -29,25 +29,27 @@ export default function Navbar({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const router = useRouter();
-const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-useEffect(() => {
-  // ดึง session ปัจจุบัน
-  supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  useEffect(() => {
+    // ดึง session ปัจจุบัน
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
 
-  // subscribe การเปลี่ยนแปลง login/logout
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-    setUser(session?.user ?? null);
-  });
+    // subscribe การเปลี่ยนแปลง login/logout
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
 
-  return () => subscription.unsubscribe();
-}, []);
+    return () => subscription.unsubscribe();
+  }, []);
 
-const handleLogout = async () => {
-  await supabase.auth.signOut();
-  router.push("/");
-  router.refresh();
-};
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  };
 
   const navLinks = [
     { label: "HOME", href: "/", id: "home" as const },
@@ -102,40 +104,58 @@ const handleLogout = async () => {
               {link.label}
             </Link>
           ))}
+
+       {user && (
+  <Link
+    href="/me"
+    className={cn(
+      "text-foreground font-medium text-sm tracking-wide hover:opacity-80 transition-opacity",
+      activePage === "me"
+        ? "underline underline-offset-4 decoration-foreground"
+        : "hover:underline underline-offset-4",
+    )}
+  >
+    MY POINT
+  </Link>
+)}
+
         </div>
 
-    {/* Desktop — Phone + Auth */}
-<div className="hidden lg:flex items-center gap-4 text-foreground">
-  {phone && (
-    <div className="flex items-center gap-2">
-      <Phone className="w-4 h-4" />
-      <span className="text-sm font-medium tracking-wide">Phone {phone}</span>
-    </div>
-  )}
-  {user ? (
-    <div className="flex items-center gap-3">
-      <Link
+        {/* Desktop — Phone + Auth */}
+        <div className="hidden lg:flex items-center gap-4 text-foreground">
+          {phone && (
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4" />
+              <span className="text-sm font-medium tracking-wide">
+                Phone {phone}
+              </span>
+            </div>
+          )}
+          {user ? (
+            <div className="flex items-center gap-3">
+              {/* <Link
         href="/me"
         className="text-sm font-medium tracking-wide hover:opacity-80 transition-opacity"
-      >
+      > 
+      <CircleUser className="mr-2"/>
         {user.email?.split("@")[0]}
-      </Link>
-      <button
-        onClick={handleLogout}
-        className="text-sm font-medium tracking-wide border border-foreground/30 px-3 py-1 rounded hover:border-red-500 hover:text-red-400 transition-colors"
-      >
-        LOGOUT
-      </button>
-    </div>
-  ) : (
-    <Link
-      href="/login"
-      className="text-sm font-medium tracking-wide border border-foreground/30 px-3 py-1 rounded hover:opacity-80 transition-opacity"
-    >
-      LOGIN
-    </Link>
-  )}
-</div>
+      </Link> */}
+              <button
+                onClick={handleLogout}
+                className="text-sm font-medium tracking-wide border border-foreground/30 px-3 py-1 rounded hover:border-red-500 hover:text-red-400 transition-colors"
+              >
+                LOGOUT
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="text-sm font-medium tracking-wide border border-foreground/30 px-3 py-1 rounded hover:opacity-80 transition-opacity"
+            >
+              LOGIN
+            </Link>
+          )}
+        </div>
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMobileMenu}
@@ -180,31 +200,42 @@ const handleLogout = async () => {
           ))}
 
           {/* Mobile Phone Number */}
-          <div className="flex flex-col items-center gap-3 text-foreground mt-8">
+          {/* <div className="flex flex-col items-center gap-3 text-foreground mt-8">
             <Phone className="w-6 h-6" />
             <span className="text-sm font-medium tracking-wide">
               {phone ? `Phone ${phone}` : ""}
             </span>
-          </div>
+          </div> */}
 
           {/* Mobile Auth */}
-{user ? (
-  <>
-    <Link href="/me" onClick={closeMobileMenu} className="text-foreground font-medium text-2xl tracking-wide hover:opacity-80">
-      MY PROFILE
-    </Link>
-    <button
-      onClick={() => { handleLogout(); closeMobileMenu(); }}
-      className="text-red-400 font-medium text-2xl tracking-wide hover:opacity-80"
-    >
-      LOGOUT
-    </button>
-  </>
-) : (
-  <Link href="/login" onClick={closeMobileMenu} className="text-foreground font-medium text-2xl tracking-wide hover:opacity-80">
-    LOGIN
-  </Link>
-)}
+          {user ? (
+            <>
+              <Link
+                href="/me"
+                onClick={closeMobileMenu}
+                className="text-foreground font-medium text-2xl tracking-wide hover:opacity-80"
+              >
+                MY PROFILE
+              </Link>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  closeMobileMenu();
+                }}
+                className="text-red-400 font-medium text-2xl tracking-wide hover:opacity-80"
+              >
+                LOGOUT
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              onClick={closeMobileMenu}
+              className="text-foreground font-medium text-2xl tracking-wide hover:opacity-80"
+            >
+              LOGIN
+            </Link>
+          )}
         </div>
       </div>
 

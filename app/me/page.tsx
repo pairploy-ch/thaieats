@@ -28,6 +28,7 @@ export default function MePage() {
   const [loading, setLoading] = useState(true);
   const hasFetched = useRef(false);
 const [promotions, setPromotions] = useState<Promotion[]>([]);
+const [phone, setPhone] = useState<string | null>(null);
 
   useEffect(() => {
     if (hasFetched.current) return;
@@ -37,25 +38,25 @@ const [promotions, setPromotions] = useState<Promotion[]>([]);
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) { router.push("/login"); return; }
 
-  const [{ data: profileData }, { data: promoData }] = await Promise.all([
+  const [{ data: profileData }, { data: promoData }, { data: contactData }] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).single(),
     supabase.from("reward").select("id, img").order("id", { ascending: true }),
+     supabase.from("contact").select("*").eq("title", "Phone").single(),
   ]);
 
+  
   setProfile(profileData);
   setPromotions(promoData ?? []);
+  setPhone(contactData?.lines?.[0] ?? null);
   setLoading(false);
+  
 };
 
 fetchData();
 
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
-  };
+
 
   const stampCount = profile?.stamp_count ?? 2;
   const points = profile?.points ?? 0;
@@ -83,10 +84,11 @@ fetchData();
   return (
     <div className="me-root">
       <style>{baseStyles}</style>
-
-      <div className="max-w-3xl mx-auto">
+   <Navbar activePage="me" phone={phone} />
+      <div className="max-w-3xl mx-auto" style={{paddingTop: '100px'}}>
         {/* ── Top bar ── */}
-        <div className="topbar">
+     
+        {/* <div className="topbar">
           <Link href="/">
             <Image
               src="/images/logo.png"
@@ -100,7 +102,7 @@ fetchData();
           <button className="logout-btn" onClick={handleLogout} type="button">
             Sign Out
           </button>
-        </div>
+        </div> */}
 
         {/* ── Points ── */}
         <div className="points-section">
