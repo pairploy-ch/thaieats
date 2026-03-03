@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Phone, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 interface NavbarProps {
   activePage?: "home" | "menu" | "contact";
@@ -23,6 +27,27 @@ export default function Navbar({
   phone,
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const router = useRouter();
+const [user, setUser] = useState<User | null>(null);
+
+useEffect(() => {
+  // ดึง session ปัจจุบัน
+  supabase.auth.getUser().then(({ data }) => setUser(data.user));
+
+  // subscribe การเปลี่ยนแปลง login/logout
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    setUser(session?.user ?? null);
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
+
+const handleLogout = async () => {
+  await supabase.auth.signOut();
+  router.push("/");
+  router.refresh();
+};
 
   const navLinks = [
     { label: "HOME", href: "/", id: "home" as const },
@@ -79,14 +104,38 @@ export default function Navbar({
           ))}
         </div>
 
-        {/* Desktop Phone Number */}
-        <div className="hidden lg:flex items-center gap-2 text-foreground">
-          <Phone className="w-4 h-4" />
-          <span className="text-sm font-medium tracking-wide">
-            {phone ? `Phone ${phone}` : ""}
-          </span>
-        </div>
-
+    {/* Desktop — Phone + Auth */}
+<div className="hidden lg:flex items-center gap-4 text-foreground">
+  {phone && (
+    <div className="flex items-center gap-2">
+      <Phone className="w-4 h-4" />
+      <span className="text-sm font-medium tracking-wide">Phone {phone}</span>
+    </div>
+  )}
+  {user ? (
+    <div className="flex items-center gap-3">
+      <Link
+        href="/me"
+        className="text-sm font-medium tracking-wide hover:opacity-80 transition-opacity"
+      >
+        {user.email?.split("@")[0]}
+      </Link>
+      <button
+        onClick={handleLogout}
+        className="text-sm font-medium tracking-wide border border-foreground/30 px-3 py-1 rounded hover:border-red-500 hover:text-red-400 transition-colors"
+      >
+        LOGOUT
+      </button>
+    </div>
+  ) : (
+    <Link
+      href="/login"
+      className="text-sm font-medium tracking-wide border border-foreground/30 px-3 py-1 rounded hover:opacity-80 transition-opacity"
+    >
+      LOGIN
+    </Link>
+  )}
+</div>
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMobileMenu}
@@ -137,6 +186,25 @@ export default function Navbar({
               {phone ? `Phone ${phone}` : ""}
             </span>
           </div>
+
+          {/* Mobile Auth */}
+{user ? (
+  <>
+    <Link href="/me" onClick={closeMobileMenu} className="text-foreground font-medium text-2xl tracking-wide hover:opacity-80">
+      MY PROFILE
+    </Link>
+    <button
+      onClick={() => { handleLogout(); closeMobileMenu(); }}
+      className="text-red-400 font-medium text-2xl tracking-wide hover:opacity-80"
+    >
+      LOGOUT
+    </button>
+  </>
+) : (
+  <Link href="/login" onClick={closeMobileMenu} className="text-foreground font-medium text-2xl tracking-wide hover:opacity-80">
+    LOGIN
+  </Link>
+)}
         </div>
       </div>
 

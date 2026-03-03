@@ -69,11 +69,11 @@ const router = useRouter();
 
       if (insertError) throw insertError;
 
- router.push("/profile");
+//  router.push("/profil");
 
 // redirect ไปหน้า profile หลัง 1 วิ
 setTimeout(() => {
-  router.push("/profile");
+  router.push("/me");
 }, 1000);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
