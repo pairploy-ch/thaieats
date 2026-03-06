@@ -40,8 +40,8 @@ export default function RootLayout({
         className={`${_inter.variable} ${_handwritten.variable} font-sans antialiased`}
       >
         {children}
-        {/* <ConditionalLayout />
-         */}
+        {/* <ConditionalLayout /> */}
+        
              <ContactSection />
                <GalleryStrip />
                <Footer />

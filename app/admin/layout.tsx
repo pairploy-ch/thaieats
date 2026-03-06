@@ -7,19 +7,20 @@ import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 
 const NAV = [
-  { href: "/admin/users", label: "Users", },
+  { href: "/admin/users", label: "Users" },
   { href: "/admin/menus", label: "Menus" },
-    { href: "/admin/banners", label: "Banners" },
-      { href: "/admin/about", label: "About" },
-         { href: "/admin/contact", label: "Contact" },
-           { href: "/admin/quote", label: "Quote" },
-           { href: "/admin/promotion", label: "Promotion" },
-           { href: "/admin/reward", label: "Reward" },
+  { href: "/admin/banners", label: "Banners" },
+  { href: "/admin/about", label: "About" },
+  { href: "/admin/contact", label: "Contact" },
+  { href: "/admin/quote", label: "Quote" },
+  { href: "/admin/promotion", label: "Promotion" },
+  { href: "/admin/reward", label: "Reward" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
   const [adminName, setAdminName] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -27,37 +28,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const check = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.replace("/login"); return; }
-
       const { data: me } = await supabase
-        .from("profiles")
-        .select("isAdmin, username")
-        .eq("id", session.user.id)
-        .single();
-
+        .from("profiles").select("isAdmin, username").eq("id", session.user.id).single();
       if (!me?.isAdmin) { router.replace("/me"); return; }
-
       setAdminName(me.username ?? "");
       setChecking(false);
     };
     check();
   }, [router]);
 
+  // ปิด sidebar เมื่อเปลี่ยนหน้า (mobile)
+  useEffect(() => { setSidebarOpen(false); }, [pathname]);
+
   if (checking) {
     return (
-      <div style={{
-        minHeight: "100vh",
-        background: "#f5f5f5",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
-      }}>
-        <div style={{
-          width: 32, height: 32,
-          border: "3px solid #e0e0e0",
-          borderTopColor: "#d32f2f",
-          borderRadius: "50%",
-          animation: "spin 0.8s linear infinite"
-        }} />
+      <div style={{ minHeight: "100vh", background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: 32, height: 32, border: "3px solid #e0e0e0", borderTopColor: "#d32f2f", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
@@ -68,6 +54,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&family=Sarabun:wght@300;400;500&display=swap');
 
+        /* ── Sidebar ── */
         .sidebar {
           width: 220px;
           min-height: 100vh;
@@ -77,30 +64,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           flex-direction: column;
           position: fixed;
           top: 0; left: 0; bottom: 0;
+          z-index: 50;
           box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+          transition: transform 0.25s ease;
         }
 
         .sidebar-top {
-          padding: 24px 20px 20px;
+          padding: 20px 20px 16px;
           border-bottom: 1px solid #f0f0f0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
         }
 
-        .sidebar-brand {
-          font-family: 'Kanit', sans-serif;
-          font-size: 15px;
-          font-weight: 700;
-          color: #1a1a1a;
-          letter-spacing: 0.04em;
-          margin-bottom: 4px;
-        }
-        .sidebar-brand span { color: #d32f2f; }
-
-        .sidebar-admin-name {
-          font-size: 12px;
-          color: #aaa;
-        }
-
-        nav { padding: 12px 0; flex: 1; }
+        nav { padding: 12px 0; flex: 1; overflow-y: auto; }
 
         .nav-item {
           display: flex;
@@ -112,18 +89,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           text-decoration: none;
           transition: background 0.15s, color 0.15s;
           border-left: 3px solid transparent;
+          white-space: nowrap;
         }
-        .nav-item:hover {
-          background: #fafafa;
-          color: #333;
-        }
-        .nav-item.active {
-          color: #d32f2f;
-          background: #fff5f5;
-          border-left-color: #d32f2f;
-          font-weight: 600;
-        }
-        .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+        .nav-item:hover { background: #fafafa; color: #333; }
+        .nav-item.active { color: #d32f2f; background: #fff5f5; border-left-color: #d32f2f; font-weight: 600; }
 
         .sidebar-footer {
           padding: 16px 20px;
@@ -133,27 +102,58 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           gap: 8px;
         }
 
-        .back-link {
-          font-size: 12px;
-          color: #bbb;
-          text-decoration: none;
-          transition: color 0.2s;
-        }
-        .back-link:hover { color: #d32f2f; }
-
         .signout-btn {
-          background: none;
-          border: none;
-          font-size: 12px;
-          color: #ccc;
-          cursor: pointer;
-          text-align: left;
-          padding: 0;
-          font-family: 'Sarabun', sans-serif;
-          transition: color 0.2s;
+          background: none; border: none; font-size: 12px; color: #ccc;
+          cursor: pointer; text-align: left; padding: 0;
+          font-family: 'Sarabun', sans-serif; transition: color 0.2s;
         }
         .signout-btn:hover { color: #d32f2f; }
 
+        /* ── Topbar (mobile) ── */
+        .topbar {
+          display: none;
+          position: fixed;
+          top: 0; left: 0; right: 0;
+          height: 56px;
+          background: #fff;
+          border-bottom: 1px solid #e8e8e8;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 16px;
+          z-index: 40;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+
+        .hamburger {
+          width: 36px; height: 36px;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          gap: 5px; cursor: pointer;
+          background: none; border: none; padding: 4px;
+        }
+        .hamburger span {
+          display: block; width: 20px; height: 2px;
+          background: #1a1a1a; border-radius: 2px;
+          transition: all 0.2s;
+        }
+
+        .close-sidebar-btn {
+          background: none; border: none; cursor: pointer;
+          font-size: 20px; color: #aaa; padding: 4px; line-height: 1;
+        }
+        .close-sidebar-btn:hover { color: #d32f2f; }
+
+        /* ── Overlay ── */
+        .sidebar-overlay {
+          display: none;
+          position: fixed; inset: 0;
+          background: rgba(0,0,0,0.4);
+          z-index: 45;
+          animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ── Content ── */
         .admin-content {
           margin-left: 220px;
           flex: 1;
@@ -161,23 +161,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           min-height: 100vh;
           color: #1a1a1a;
         }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+          .sidebar { transform: translateX(-100%); }
+          .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.12); }
+          .sidebar-overlay { display: block; }
+          .topbar { display: flex; }
+          .admin-content { margin-left: 0; padding: 80px 16px 32px; }
+        }
       `}</style>
 
-      {/* Sidebar */}
-      <aside className="sidebar">
+      {/* ── Mobile Topbar ── */}
+      <div className="topbar">
+        <button className="hamburger" onClick={() => setSidebarOpen(true)}>
+          <span /><span /><span />
+        </button>
+        <Image src="/images/logo-black.png" alt="Logo" width={120} height={30} style={{ height: 28, width: "auto" }} priority />
+        <div style={{ width: 36 }} />
+      </div>
+
+      {/* ── Overlay ── */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* ── Sidebar ── */}
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="sidebar-top">
-                  <Image
-                          src="/images/logo-black.png"
-                          alt="Thai Street Eats Logo"
-                          width={200}
-                          height={50}
-                          className="h-10 sm:h-10 w-auto"
-                          priority
-                        />
-          {/* <div className="sidebar-brand">
-            Admin Panel
-          </div> */}
-          {/* <div className="sidebar-admin-name">@{adminName}</div> */}
+          <Image src="/images/logo-black.png" alt="Logo" width={160} height={40} style={{ height: 36, width: "auto" }} priority />
+          <button className="close-sidebar-btn" onClick={() => setSidebarOpen(false)}>✕</button>
         </div>
 
         <nav>
@@ -187,20 +200,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               href={item.href}
               className={`nav-item ${pathname.startsWith(item.href) ? "active" : ""}`}
             >
-            
               {item.label}
             </Link>
           ))}
         </nav>
 
         <div className="sidebar-footer">
-         
+          <span style={{ fontSize: 12, color: "#bbb" }}>@{adminName}</span>
           <button
             className="signout-btn"
-            onClick={async () => {
-              await supabase.auth.signOut();
-              router.push("/login");
-            }}
+            onClick={async () => { await supabase.auth.signOut(); router.push("/login"); }}
           >
             Sign out
           </button>
