@@ -322,7 +322,7 @@ export default function AdminMenusPage() {
                 </div>
               ) : (
                 <div className="upload-zone" onClick={() => addFileRef.current?.click()}>
-                  <div style={{ fontSize: 28, marginBottom: 6 }}>📷</div>
+                
                   <div className="upload-zone-text">Click to upload or <span>browse</span></div>
                   <div style={{ fontSize: 11, color: "#ddd", marginTop: 4 }}>JPG, PNG, WEBP</div>
                 </div>
@@ -380,7 +380,7 @@ export default function AdminMenusPage() {
                 </div>
               ) : (
                 <div className="upload-zone" onClick={() => editFileRef.current?.click()}>
-                  <div style={{ fontSize: 28, marginBottom: 6 }}>📷</div>
+              
                   <div className="upload-zone-text">Click to upload or <span>browse</span></div>
                   <div style={{ fontSize: 11, color: "#ddd", marginTop: 4 }}>JPG, PNG, WEBP</div>
                 </div>

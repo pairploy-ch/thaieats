@@ -9,7 +9,7 @@ import Image from "next/image";
 const NAV = [
   { href: "/admin/users", label: "Users", },
   { href: "/admin/menus", label: "Menus" },
-    { href: "/admin/banner", label: "Banners" },
+    { href: "/admin/banners", label: "Banners" },
       { href: "/admin/about", label: "About" },
          { href: "/admin/contact", label: "Contact" },
            { href: "/admin/quote", label: "Quote" },
