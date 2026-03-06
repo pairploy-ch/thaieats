@@ -3,24 +3,27 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase"; 
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-//   const [success, setSuccess] = useState(false);
-const router = useRouter();
+  const router = useRouter();
 
   const handleSubmit = async () => {
     setError(null);
 
-    // ── Basic validation ──
-    if (!username.trim() || !phone.trim() || !password.trim()) {
+    if (!username.trim() || !email.trim() || !phone.trim() || !password.trim()) {
       setError("Please fill in all required fields.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError("Please enter a valid email address.");
       return;
     }
     if (password.length < 6) {
@@ -46,13 +49,13 @@ const router = useRouter();
         return;
       }
 
-      // ── 2. Supabase Auth signUp ──
-      // ใช้ fake email เพราะ Auth ต้องการ email แต่ระบบ login ด้วย username
-      const fakeEmail = `${username.trim().toLowerCase()}@thaieats.app`;
-
+      // ── 2. Supabase Auth signUp ด้วยอีเมลจริง ──
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: fakeEmail,
+        email: email.trim().toLowerCase(),
         password,
+        options: {
+          data: { username: username.trim() },
+        },
       });
 
       if (signUpError) throw signUpError;
@@ -60,21 +63,19 @@ const router = useRouter();
       const userId = authData.user?.id;
       if (!userId) throw new Error("Unable to create account. Please try again.");
 
-      // ── 3. Insert ลง profiles table ──
+      // ── 3. Insert ลง profiles table (เก็บ email ไว้สำหรับ login ด้วย username) ──
       const { error: insertError } = await supabase.from("profiles").insert({
         id: userId,
         username: username.trim(),
+        email: email.trim().toLowerCase(),
         phone: phone.trim(),
       });
 
       if (insertError) throw insertError;
 
-//  router.push("/profil");
-
-// redirect ไปหน้า profile หลัง 1 วิ
-setTimeout(() => {
-  router.push("/me");
-}, 1000);
+      setTimeout(() => {
+        router.push("/me");
+      }, 1000);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
       setError(message);
@@ -191,7 +192,6 @@ setTimeout(() => {
 
         .alert {
           padding: 12px 16px;
-         
           font-size: 13px;
           margin-bottom: 16px;
           animation: fadeUp 0.3s ease both;
@@ -224,8 +224,6 @@ setTimeout(() => {
           box-shadow: 0 4px 20px rgba(211,47,47,0.35);
           animation: fadeUp 0.6s 0.35s ease both;
         }
-
-
 
         .signin-btn:active:not(:disabled) { transform: translateY(0); }
         .signin-btn:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -277,7 +275,6 @@ setTimeout(() => {
         .login-card { position: relative; z-index: 1; }
       `}</style>
 
-      {/* Back button */}
       <Link href="/" className="back-btn" aria-label="Go back">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
@@ -290,7 +287,6 @@ setTimeout(() => {
       </div>
 
       <div className="login-card">
-        {/* Logo */}
         <div className="logo-wrap">
           <Link href="/">
             <Image
@@ -306,61 +302,69 @@ setTimeout(() => {
 
         <h1 className="login-heading">Create your Account</h1>
 
-        {/* Error / Success alerts */}
         {error && <div className="alert alert-error">⚠️ {error}</div>}
 
-
-        {/* Form — ซ่อนหลัง success */}
-      
-            <div className="input-group">
-              <div className="input-wrap">
-                <input
-                  className="input-field"
-                  type="text"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  autoComplete="username"
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="input-wrap">
-                <input
-                  className="input-field"
-                  type="tel"
-                  placeholder="Phone Number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  autoComplete="tel"
-                  inputMode="numeric"
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="input-wrap">
-                <input
-                  className="input-field"
-                  type="password"
-                  placeholder="Password (at least 6 characters)"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="new-password"
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
-            <button
-              className="signin-btn"
-              onClick={handleSubmit}
+        <div className="input-group">
+          <div className="input-wrap">
+            <input
+              className="input-field"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
               disabled={loading}
-              type="button"
-            >
-              {loading && <span className="btn-spinner" />}
-              {loading ? "CREATING..." : "CREATE ACCOUNT"}
-            </button>
-  
+            />
+          </div>
+
+          <div className="input-wrap">
+            <input
+              className="input-field"
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              inputMode="email"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-wrap">
+            <input
+              className="input-field"
+              type="tel"
+              placeholder="Phone Number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              autoComplete="tel"
+              inputMode="numeric"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-wrap">
+            <input
+              className="input-field"
+              type="password"
+              placeholder="Password (at least 6 characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              disabled={loading}
+            />
+          </div>
+        </div>
+
+        <button
+          className="signin-btn"
+          onClick={handleSubmit}
+          disabled={loading}
+          type="button"
+        >
+          {loading && <span className="btn-spinner" />}
+          {loading ? "CREATING..." : "CREATE ACCOUNT"}
+        </button>
 
         <p className="footer-signup">
           Already have an account?

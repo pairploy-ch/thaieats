@@ -3,18 +3,66 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async () => {
+    setError(null);
+
+    if (!username.trim() || !password.trim()) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+
     setLoading(true);
-    // TODO: implement authentication logic
-    await new Promise((r) => setTimeout(r, 1200));
-    setLoading(false);
+
+    try {
+      // ── 1. หา email จาก username ใน profiles ──
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("username", username.trim())
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+
+      if (!profile?.email) {
+        setError("Username not found. Please check and try again.");
+        setLoading(false);
+        return;
+      }
+
+      // ── 2. signIn ด้วย email ที่ได้มา ──
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: profile.email,
+        password,
+      });
+
+      if (signInError) {
+        if (signInError.message.toLowerCase().includes("invalid")) {
+          setError("Incorrect password. Please try again.");
+        } else {
+          throw signInError;
+        }
+        return;
+      }
+
+      // ── 3. redirect ──
+      router.push("/me");
+
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -24,22 +72,20 @@ export default function LoginPage() {
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
- .login-root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  background-image: url("/images/bg-chalkboard.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-
-  font-family: 'Sarabun', sans-serif;
-  padding: 24px;
-}
+        .login-root {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-image: url("/images/bg-chalkboard.png");
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          font-family: 'Sarabun', sans-serif;
+          padding: 24px;
+        }
 
         .login-card {
           width: 100%;
@@ -55,7 +101,6 @@ export default function LoginPage() {
           to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── Logo ── */
         .logo-wrap {
           display: flex;
           align-items: center;
@@ -65,48 +110,14 @@ export default function LoginPage() {
           animation: fadeUp 0.6s ease both;
         }
 
-        .logo-icon {
-          width: 48px;
-          height: 48px;
-          background: #d32f2f;
-        
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 26px;
-          box-shadow: 0 4px 20px rgba(211,47,47,0.45);
-        }
-
-        .logo-text-wrap { display: flex; flex-direction: column; }
-
-        .logo-title {
-          font-family: 'Kanit', sans-serif;
-          font-weight: 700;
-          font-size: 20px;
-          color: #fff;
-          letter-spacing: 0.06em;
-          line-height: 1.1;
-        }
-
-        .logo-sub {
-          font-size: 11px;
-          color: #aaa;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          font-weight: 300;
-        }
-
-        /* ── Heading ── */
         .login-heading {
           font-family: 'Kanit', sans-serif;
-        
           font-size: 26px;
           color: #fff;
           margin-bottom: 28px;
           animation: fadeUp 0.6s 0.1s ease both;
         }
 
-        /* ── Inputs ── */
         .input-group {
           display: flex;
           flex-direction: column;
@@ -114,15 +125,12 @@ export default function LoginPage() {
           animation: fadeUp 0.6s 0.2s ease both;
         }
 
-        .input-wrap {
-          position: relative;
-        }
+        .input-wrap { position: relative; }
 
         .input-field {
           width: 100%;
           background: rgba(255,255,255,0.06);
           border: 1.5px solid rgba(255,255,255,0.12);
-          
           padding: 16px 18px;
           font-family: 'Sarabun', sans-serif;
           font-size: 15px;
@@ -139,22 +147,8 @@ export default function LoginPage() {
           box-shadow: 0 0 0 3px rgba(211,47,47,0.15);
         }
 
-        .toggle-btn {
-          position: absolute;
-          right: 14px;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: #666;
-          font-size: 18px;
-          padding: 4px;
-          transition: color 0.2s;
-        }
-       
+        .input-field:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* ── Forget password ── */
         .forgot-wrap {
           display: flex;
           justify-content: flex-end;
@@ -171,28 +165,33 @@ export default function LoginPage() {
         }
         .forgot-link:hover { color: #d32f2f; }
 
-        /* ── Sign in button ── */
+        .alert {
+          padding: 12px 16px;
+          font-size: 13px;
+          margin-bottom: 16px;
+          animation: fadeUp 0.3s ease both;
+          line-height: 1.5;
+          background: rgba(211,47,47,0.12);
+          border: 1px solid rgba(211,47,47,0.35);
+          color: #ff8a80;
+        }
+
         .signin-btn {
           margin-top: 20px;
           width: 100%;
           padding: 17px;
           background: #d32f2f;
           border: none;
-        
           font-family: 'Kanit', sans-serif;
           font-weight: 600;
           font-size: 15px;
           letter-spacing: 0.12em;
           color: #fff;
           cursor: pointer;
-          position: relative;
-          overflow: hidden;
           transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
           box-shadow: 0 4px 20px rgba(211,47,47,0.35);
           animation: fadeUp 0.6s 0.35s ease both;
         }
-
- 
 
         .signin-btn:active:not(:disabled) { transform: translateY(0); }
         .signin-btn:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -211,18 +210,6 @@ export default function LoginPage() {
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ── Divider (optional) ── */
-        .divider {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin: 28px 0 0;
-          animation: fadeUp 0.6s 0.4s ease both;
-        }
-        .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
-        .divider-text { font-size: 12px; color: #555; letter-spacing: 0.06em; }
-
-        /* ── Footer links ── */
         .footer-signup {
           text-align: center;
           font-size: 14px;
@@ -240,18 +227,6 @@ export default function LoginPage() {
         }
         .footer-signup a:hover { color: #ef5350; }
 
-        .footer-copy {
-          font-size: 11px;
-          color: #444;
-          text-align: center;
-          padding-top: 16px;
-          border-top: 1px solid rgba(255,255,255,0.06);
-          width: 100%;
-          max-width: 420px;
-          letter-spacing: 0.03em;
-        }
-
-        /* ── Spice dots decoration ── */
         .deco-dots {
           position: fixed;
           top: 0; left: 0; right: 0; bottom: 0;
@@ -265,34 +240,33 @@ export default function LoginPage() {
           background: #d32f2f;
           opacity: 0.04;
         }
-        .login-card, .footer-copy { position: relative; z-index: 1; }
+        .login-card { position: relative; z-index: 1; }
       `}</style>
 
-      {/* Background decoration */}
       <div className="deco-dots" aria-hidden="true">
         <div className="deco-dot" style={{ width: 320, height: 320, top: -80, right: -100 }} />
         <div className="deco-dot" style={{ width: 200, height: 200, bottom: 60, left: -60 }} />
       </div>
 
       <div className="login-card">
-        {/* Logo */}
         <div className="logo-wrap">
-             <Link href="/" className="flex items-center gap-3 z-50">
-          <Image
-            src="/images/logo.png"
-            alt="Thai Street Eats Logo"
-            width={300}
-            height={400}
-            className="h-14 sm:h-16 w-auto"
-            priority
-          />
-        </Link>
+          <Link href="/" className="flex items-center gap-3 z-50">
+            <Image
+              src="/images/logo.png"
+              alt="Thai Street Eats Logo"
+              width={300}
+              height={400}
+              className="h-14 sm:h-16 w-auto"
+              priority
+            />
+          </Link>
         </div>
 
-        {/* Heading */}
         <h1 className="login-heading">Login to your Account</h1>
 
-        {/* Form fields */}
+        {/* ── Error alert ── */}
+        {error && <div className="alert">⚠️ {error}</div>}
+
         <div className="input-group">
           <div className="input-wrap">
             <input
@@ -302,6 +276,7 @@ export default function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
+              disabled={loading}
             />
           </div>
 
@@ -313,18 +288,15 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
-              style={{ paddingRight: 44 }}
+              disabled={loading}
             />
-       
           </div>
         </div>
 
-        {/* Forgot password */}
         <div className="forgot-wrap">
           <a href="/forgot-password" className="forgot-link">Forget Password?</a>
         </div>
 
-        {/* Sign in button */}
         <button
           className="signin-btn"
           onClick={handleSubmit}
@@ -335,13 +307,11 @@ export default function LoginPage() {
           {loading ? "SIGNING IN..." : "SIGN IN"}
         </button>
 
-        {/* Sign up link */}
         <p className="footer-signup">
           Don&apos;t have an account?
           <a href="/register">Sign up</a>
         </p>
       </div>
-
     </div>
   );
 }
