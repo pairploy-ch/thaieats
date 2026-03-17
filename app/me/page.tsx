@@ -118,7 +118,7 @@ fetchData();
           <h2 className="section-title">Promotion</h2>
           <div className="promo-scroll">
             {promotions.length === 0 ? (
-  <p style={{ color: "#555", fontSize: 13 }}>ไม่มีโปรโมชั่นในขณะนี้</p>
+  <p style={{ color: "#555", fontSize: 13 }}>No promotions are currently available</p>
 ) : (
   promotions.map((p) => (
     <div className="promo-card" key={p.id}>

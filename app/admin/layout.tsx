@@ -168,7 +168,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.12); }
           .sidebar-overlay { display: block; }
           .topbar { display: flex; }
-          .admin-content { margin-left: 0; padding: 80px 16px 32px; }
+        .admin-content { margin-left: 0; padding: 80px 16px 32px; min-width: 0; overflow-x: hidden; }
         }
       `}</style>
 

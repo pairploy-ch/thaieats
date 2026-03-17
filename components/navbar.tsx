@@ -3,7 +3,7 @@
 // import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Phone, Menu, X, CircleUser } from "lucide-react";
+import { Phone, Menu, X, CircleUser, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -115,7 +115,7 @@ export default function Navbar({
         : "hover:underline underline-offset-4",
     )}
   >
-    MY POINT
+    MEMBER CARD
   </Link>
 )}
 
@@ -133,13 +133,6 @@ export default function Navbar({
           )}
           {user ? (
             <div className="flex items-center gap-3">
-              {/* <Link
-        href="/me"
-        className="text-sm font-medium tracking-wide hover:opacity-80 transition-opacity"
-      > 
-      <CircleUser className="mr-2"/>
-        {user.email?.split("@")[0]}
-      </Link> */}
               <button
                 onClick={handleLogout}
                 className="text-sm font-medium tracking-wide border border-foreground/30 px-3 py-1 rounded hover:border-red-500 hover:text-red-400 transition-colors"
@@ -156,18 +149,34 @@ export default function Navbar({
             </Link>
           )}
         </div>
-        {/* Mobile Menu Button */}
-        <button
-          onClick={toggleMobileMenu}
-          className="md:hidden z-50 p-2 text-foreground hover:opacity-80 transition-opacity"
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Menu className="w-6 h-6" />
+
+        {/* Mobile Right Side: Member Card Button + Menu Toggle */}
+        <div className="md:hidden flex items-center gap-2 z-50">
+          {user && (
+            <Link
+              href="/me"
+              onClick={closeMobileMenu}
+              className={cn(
+                "flex items-center gap-1.5 text-foreground text-xs font-medium tracking-wide border border-foreground/30 px-2.5 py-1.5 rounded hover:opacity-80 transition-opacity",
+                activePage === "me" && "border-foreground",
+              )}
+            >
+              {/* <CreditCard className="w-4 h-4" /> */}
+              <span>MEMBER CARD</span>
+            </Link>
           )}
-        </button>
+          <button
+            onClick={toggleMobileMenu}
+            className="p-2 text-foreground hover:opacity-80 transition-opacity"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Subtle divider line */}
@@ -199,14 +208,6 @@ export default function Navbar({
             </Link>
           ))}
 
-          {/* Mobile Phone Number */}
-          {/* <div className="flex flex-col items-center gap-3 text-foreground mt-8">
-            <Phone className="w-6 h-6" />
-            <span className="text-sm font-medium tracking-wide">
-              {phone ? `Phone ${phone}` : ""}
-            </span>
-          </div> */}
-
           {/* Mobile Auth */}
           {user ? (
             <>
@@ -215,7 +216,7 @@ export default function Navbar({
                 onClick={closeMobileMenu}
                 className="text-foreground font-medium text-2xl tracking-wide hover:opacity-80"
               >
-                MY PROFILE
+                MEMBER CARD
               </Link>
               <button
                 onClick={() => {

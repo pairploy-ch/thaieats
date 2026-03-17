@@ -92,9 +92,10 @@ export default function AdminUsersPage() {
     const amount = parseInt(stampModal.value);
     if (isNaN(amount) || amount <= 0) return;
     setStampModal((m) => m ? { ...m, saving: true } : null);
+    const current = stampModal.user.stamp_count ?? 0;
     const newStamps = stampModal.mode === "add"
-      ? Math.min(MAX_STAMPS, (stampModal.user.stamp_count ?? 0) + amount)
-      : Math.max(0, (stampModal.user.stamp_count ?? 0) - amount);
+      ? ((current + amount - 1) % MAX_STAMPS) + 1
+      : Math.max(0, current - amount);
     const { error } = await supabase.from("profiles").update({ stamp_count: newStamps }).eq("id", stampModal.user.id);
     if (!error) {
       setUsers((prev) => prev.map((u) => u.id === stampModal.user.id ? { ...u, stamp_count: newStamps } : u));
@@ -131,11 +132,11 @@ export default function AdminUsersPage() {
   );
 
   return (
-    <div>
+    <div style={{ minWidth: 0, width: "100%" }}>
       <style>{`
         .page-title {
           font-family: 'Kanit', sans-serif;
-          font-size: 22px; 
+          font-size: 22px;
           color: #1a1a1a; margin-bottom: 24px;
         }
 
@@ -148,7 +149,8 @@ export default function AdminUsersPage() {
         .search-input {
           background: #fff; border: 1.5px solid #e8e8e8;
           padding: 10px 16px; font-family: 'Sarabun', sans-serif;
-          font-size: 14px; color: #1a1a1a; outline: none; width: 280px;
+          font-size: 14px; color: #1a1a1a; outline: none;
+          width: 100%; max-width: 280px; box-sizing: border-box;
           transition: border-color 0.2s, box-shadow 0.2s;
         }
         .search-input::placeholder { color: #bbb; }
@@ -158,14 +160,21 @@ export default function AdminUsersPage() {
           background: #fff5f5; border: 1px solid #ffcdd2;
           color: #d32f2f; font-size: 12px; padding: 4px 12px;
           border-radius: 999px; font-family: 'Kanit', sans-serif;
+          white-space: nowrap;
         }
 
-        .table-wrap {
-          overflow-x: auto; border: 1px solid #efefef;
-          background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        /* ── THE fix: scroll lives here, not on table-wrap ── */
+        .table-scroll-outer {
+          display: block;
+          width: 100%;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          border: 1px solid #efefef;
+          background: #fff;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
 
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 14px; }
         thead { background: #fafafa; border-bottom: 1px solid #f0f0f0; }
         th {
           text-align: left; padding: 13px 18px;
@@ -185,52 +194,41 @@ export default function AdminUsersPage() {
 
         .point-actions { display: flex; align-items: center; gap: 8px; }
 
-        /* ── ปุ่ม +/- ใช้ outline แดง ── */
         .pt-btn {
           width: 26px; height: 26px; border-radius: 50%;
           border: 1.5px solid #d32f2f; background: none;
           cursor: pointer; font-size: 15px; font-weight: 700; line-height: 1;
           display: flex; align-items: center; justify-content: center;
-          color: #d32f2f;
+          color: #d32f2f; flex-shrink: 0;
           transition: background 0.15s, transform 0.1s;
           font-family: 'Kanit', sans-serif;
         }
         .pt-btn:hover { background: #fff5f5; }
         .pt-btn:active { transform: scale(0.9); }
 
-        /* ── Role toggle ── */
         .role-toggle {
           display: inline-flex; align-items: center; gap: 5px;
           padding: 4px 12px; border-radius: 999px; font-size: 12px;
           font-family: 'Kanit', sans-serif; cursor: pointer;
           transition: background 0.15s, transform 0.1s;
+          white-space: nowrap;
         }
         .role-toggle:disabled { opacity: 0.4; cursor: not-allowed; }
         .role-toggle:active:not(:disabled) { transform: scale(0.96); }
-
-        /* admin = สีแดง solid */
-        .role-toggle.is-admin {
-          background: #d32f2f; color: #fff; border: 1px solid #d32f2f;
-        }
+        .role-toggle.is-admin { background: #d32f2f; color: #fff; border: 1px solid #d32f2f; }
         .role-toggle.is-admin:hover:not(:disabled) { background: #b71c1c; border-color: #b71c1c; }
-
-        /* user = outline แดง */
-        .role-toggle.is-user {
-          background: none; color: #d32f2f; border: 1px solid #d32f2f;
-        }
+        .role-toggle.is-user { background: none; color: #d32f2f; border: 1px solid #d32f2f; }
         .role-toggle.is-user:hover:not(:disabled) { background: #fff5f5; }
 
-        /* ── Edit button = outline แดง ── */
         .edit-btn {
           padding: 5px 14px; font-size: 12px; font-family: 'Kanit', sans-serif;
           cursor: pointer; border: 1.5px solid #d32f2f; color: #d32f2f;
-          background: none; font-weight: 600;
+          background: none; font-weight: 600; white-space: nowrap;
           transition: background 0.15s, transform 0.1s;
         }
         .edit-btn:hover { background: #fff5f5; }
         .edit-btn:active { transform: scale(0.96); }
 
-        /* ── Modal ── */
         .modal-overlay {
           position: fixed; inset: 0; background: rgba(0,0,0,0.3);
           backdrop-filter: blur(4px); z-index: 100;
@@ -298,8 +296,6 @@ export default function AdminUsersPage() {
         .edit-input:focus { border-color: #d32f2f; box-shadow: 0 0 0 3px rgba(211,47,47,0.08); background: #fff; }
 
         .modal-actions { display: flex; gap: 10px; }
-
-        /* Cancel = outline แดง */
         .modal-cancel {
           flex: 1; padding: 12px; background: none;
           border: 1.5px solid #d32f2f; color: #d32f2f;
@@ -308,8 +304,6 @@ export default function AdminUsersPage() {
         }
         .modal-cancel:hover { background: #fff5f5; }
         .modal-cancel:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        /* Confirm = solid แดง */
         .modal-confirm {
           flex: 2; padding: 12px; border: none;
           background: #d32f2f; color: #fff;
@@ -346,7 +340,7 @@ export default function AdminUsersPage() {
       {error && <div className="state-wrap" style={{ color: "#d32f2f" }}>⚠️ {error}</div>}
 
       {!loading && !error && (
-        <div className="table-wrap">
+        <div className="table-scroll-outer">
           <table>
             <thead>
               <tr>
@@ -459,7 +453,7 @@ export default function AdminUsersPage() {
             {stampModal.value && !isNaN(parseInt(stampModal.value)) && parseInt(stampModal.value) > 0 && (
               <p className="modal-preview">Result: <span>
                 {stampModal.mode === "add"
-                  ? Math.min(MAX_STAMPS, (stampModal.user.stamp_count ?? 0) + parseInt(stampModal.value))
+                  ? (((stampModal.user.stamp_count ?? 0) + parseInt(stampModal.value) - 1) % MAX_STAMPS) + 1
                   : Math.max(0, (stampModal.user.stamp_count ?? 0) - parseInt(stampModal.value))} / {MAX_STAMPS}
               </span></p>
             )}
@@ -479,7 +473,6 @@ export default function AdminUsersPage() {
         <div className="modal-overlay" onClick={() => !editModal.saving && setEditModal(null)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <h2 className="modal-title">Edit User</h2>
-         
             <div className="edit-field">
               <label className="edit-label">Username</label>
               <input className="edit-input" type="text" value={editModal.username}
